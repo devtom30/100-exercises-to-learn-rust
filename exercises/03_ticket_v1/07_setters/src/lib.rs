@@ -3,6 +3,8 @@
 //   Even better, extract that logic and reuse it in both places. You can use
 //   private functions or private static methods for that.
 
+use std::os::linux::raw::stat;
+
 pub struct Ticket {
     title: String,
     description: String,
@@ -11,21 +13,10 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn new(title: String, description: String, status: String) -> Ticket {
-        if title.is_empty() {
-            panic!("Title cannot be empty");
-        }
-        if title.len() > 50 {
-            panic!("Title cannot be longer than 50 bytes");
-        }
-        if description.is_empty() {
-            panic!("Description cannot be empty");
-        }
-        if description.len() > 500 {
-            panic!("Description cannot be longer than 500 bytes");
-        }
-        if status != "To-Do" && status != "In Progress" && status != "Done" {
-            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
-        }
+
+        check_title(title.as_str());
+        check_description(description.as_str());
+        check_status(status.as_str());
 
         Ticket {
             title,
@@ -44,6 +35,45 @@ impl Ticket {
 
     pub fn status(&self) -> &String {
         &self.status
+    }
+
+
+    pub fn set_title(&mut self, title: String) {
+        check_title(title.as_str());
+        self.title = title;
+    }
+    pub fn set_description(&mut self, description: String) {
+        check_description(description.as_str());
+        self.description = description;
+    }
+    pub fn set_status(&mut self, status: String) {
+        check_status(status.as_str());
+        self.status = status;
+    }
+}
+
+fn check_title(title: &str) {
+    if title.is_empty() {
+        panic!("Title cannot be empty");
+    }
+
+    if title.len() > 50 {
+        panic!("Title cannot be longer than 50 bytes");
+    }
+}
+
+fn check_description(description: &str) {
+    if description.is_empty() {
+        panic!("Description cannot be empty");
+    }
+    if description.len() > 500 {
+        panic!("Description cannot be longer than 500 bytes");
+    }
+}
+
+fn check_status(status: &str) {
+    if status != "To-Do" && status != "In Progress" && status != "Done" {
+        panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
     }
 }
 
