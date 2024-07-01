@@ -11,3 +11,59 @@
 // Integration here has a very specific meaning: they test **the public API** of your project.
 // You'll need to pay attention to the visibility of your types and methods; integration
 // tests can't access private or `pub(crate)` items.
+
+pub struct Order {
+    product_name: String,
+    quantity: u32,
+    unit_price: u32
+}
+
+impl Order {
+    pub fn product_name(&self) -> &str {
+        &self.product_name
+    }
+    pub fn quantity(&self) -> &u32 {
+        &self.quantity
+    }
+    pub fn unit_price(&self) -> &u32 {
+        &self.unit_price
+    }
+
+    pub fn set_product_name(&mut self, product_name: String) {
+        check_product_name(&product_name);
+        self.product_name = product_name;
+    }
+    pub fn set_quantity(&mut self, quantity: u32) {
+        check_strictly_pos(quantity);
+        self.quantity = quantity;
+    }
+    pub fn set_unit_price(&mut self, unit_price: u32) {
+        check_strictly_pos(unit_price);
+        self.unit_price = unit_price;
+    }
+    pub fn total(&self) -> u32 {
+        self.unit_price * self.quantity
+    }
+    pub fn new(product_name: String, quantity: u32, unit_price: u32) -> Self {
+        check_product_name(&product_name);
+        check_strictly_pos(quantity);
+        check_strictly_pos(unit_price);
+        Self { product_name, quantity, unit_price }
+    }
+}
+
+fn check_product_name(product_name: &str) {
+    if product_name.is_empty() {
+        panic!("Product name cannot be empty");
+    }
+
+    if product_name.bytes().len() > 300 {
+        panic!("Product name  cannot be longer than 300 bytes");
+    }
+}
+
+fn check_strictly_pos(number: u32) {
+    if number == 0 {
+        panic!("Cannot be zero");
+    }
+}
