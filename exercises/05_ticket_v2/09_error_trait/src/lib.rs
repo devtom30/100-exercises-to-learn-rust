@@ -4,9 +4,10 @@
 //  https://doc.rust-lang.org/std/fmt/index.html#write
 
 use std::error::Error;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 
-#[derive(Debug)]
+use crate::TicketNewError::DescriptionError;
+
 enum TicketNewError {
     TitleError(String),
     DescriptionError(String),
@@ -14,7 +15,19 @@ enum TicketNewError {
 
 impl Display for TicketNewError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self)
+        match &self {
+            TicketNewError::TitleError(x) => write!(f,"{}", x),
+            DescriptionError(x) => write!(f, "{}", x)
+        }
+    }
+}
+
+impl Debug for TicketNewError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match &self {
+            TicketNewError::TitleError(x) => write!(f,"TitleError({})", x),
+            DescriptionError(x) => write!(f, "DescriptionError({})", x)
+        }
     }
 }
 
@@ -87,9 +100,11 @@ impl Ticket {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use common::{overly_long_description, overly_long_title, valid_description, valid_title};
     use static_assertions::assert_impl_one;
+
+    use common::{overly_long_description, overly_long_title, valid_description, valid_title};
+
+    use super::*;
 
     #[test]
     #[should_panic(expected = "Title cannot be empty")]
