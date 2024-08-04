@@ -8,6 +8,34 @@ enum Status {
     Done,
 }
 
+impl From<String> for Status {
+    fn from(value: String) -> Self {
+        if value.eq_ignore_ascii_case("todo") {
+            Status::ToDo
+        } else if value.eq_ignore_ascii_case("inprogress") {
+            Status::InProgress
+        } else if value.eq_ignore_ascii_case("done") {
+            Status::Done
+        } else {
+            panic!("status not recognized")
+        }
+    }
+}
+
+impl From<&str> for Status {
+    fn from(value: &str) -> Self {
+        if value.eq_ignore_ascii_case("todo") {
+            Status::ToDo
+        } else if value.eq_ignore_ascii_case("inprogress") {
+            Status::InProgress
+        } else if value.eq_ignore_ascii_case("done") {
+            Status::Done
+        } else {
+            panic!("status not recognized")
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
