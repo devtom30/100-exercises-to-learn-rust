@@ -2,7 +2,32 @@
 //   enforcing that the description is not empty and is not longer than 500 bytes.
 //   Implement the traits required to make the tests pass too.
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct TicketDescription(String);
+
+impl From<String> for TicketDescription {
+    fn from(value: String) -> Self {
+        if value.is_empty() {
+            panic!("must not be empty")
+        } else if value.len() > 50 {
+            panic!("lenght <= 50")
+        } else {
+            TicketDescription(value)
+        }
+    }
+}
+
+impl From<&str> for TicketDescription {
+    fn from(value: &str) -> Self {
+        if value.is_empty() {
+            panic!("must not be empty")
+        } else if value.len() > 50 {
+            panic!("lenght <= 50")
+        } else {
+            TicketDescription(value.to_string())
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
