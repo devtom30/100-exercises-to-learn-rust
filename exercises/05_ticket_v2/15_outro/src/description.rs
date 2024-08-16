@@ -5,29 +5,37 @@
 #[derive(Debug, PartialEq, Clone)]
 pub struct TicketDescription(String);
 
-impl From<String> for TicketDescription {
-    fn from(value: String) -> Self {
+const DESCRIPTION_EMPTY_ERROR: &str = "The description cannot be empty";
+const DESCRIPTION_TOO_LONG: &str = "The description cannot be longer than 500 bytes";
+
+impl TryFrom<String> for TicketDescription {
+    type Error = (String);
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
         if value.is_empty() {
-            panic!("must not be empty")
+            Err(DESCRIPTION_EMPTY_ERROR.to_string())
         } else if value.len() > 50 {
-            panic!("lenght <= 50")
+            Err(DESCRIPTION_TOO_LONG.to_string())
         } else {
-            TicketDescription(value)
+            Ok(TicketDescription(value))
         }
     }
 }
 
-impl From<&str> for TicketDescription {
-    fn from(value: &str) -> Self {
+impl TryFrom<&str> for TicketDescription {
+    type Error = (String);
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
         if value.is_empty() {
-            panic!("must not be empty")
+            Err(DESCRIPTION_EMPTY_ERROR.to_string())
         } else if value.len() > 50 {
-            panic!("lenght <= 50")
+            Err(DESCRIPTION_TOO_LONG.to_string())
         } else {
-            TicketDescription(value.to_string())
+            Ok(TicketDescription(value.to_string()))
         }
     }
 }
+
 
 #[cfg(test)]
 mod tests {
