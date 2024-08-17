@@ -30,12 +30,17 @@ impl TicketStore {
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
     }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, Ticket> {
+        self.tickets.iter()
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use ticket_fields::test_helpers::{ticket_description, ticket_title};
+
+    use super::*;
 
     #[test]
     fn add_ticket() {
