@@ -38,10 +38,10 @@ impl TicketStore {
 
 impl<'a> IntoIterator for &'a TicketStore {
     type Item = &'a Ticket;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
+    type IntoIter = std::slice::Iter<'a, Ticket>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.tickets.iter().map(|ticket: &Ticket| ticket).collect::<Vec<&Ticket>>().into_iter()
+        self.tickets.iter()
     }
 }
 
