@@ -31,12 +31,19 @@ impl TicketStore {
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
     }
+
+    pub fn in_progress(&self) -> impl Iterator<Item = &Ticket> {
+        self.tickets
+            .iter()
+            .filter(|ticket| ticket.status == Status::InProgress)
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use ticket_fields::test_helpers::{ticket_description, ticket_title};
+
+    use super::*;
 
     #[test]
     fn in_progress() {
