@@ -7,10 +7,10 @@ pub fn sum(slice: &'static [i32]) -> i32 {
     let (a, b) = slice.split_at(slice.len() / 2).into();
 
     thread::spawn(move || {
-        a.into_iter().sum::<i32>()
+        a.iter().sum::<i32>()
     }).join().unwrap()
         + thread::spawn(move || {
-        b.into_iter().sum::<i32>()
+        b.iter().sum::<i32>()
     }).join().unwrap()
 }
 
