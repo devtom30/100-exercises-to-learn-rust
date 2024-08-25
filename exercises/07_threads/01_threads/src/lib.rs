@@ -15,7 +15,22 @@
 use std::thread;
 
 pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+    if v.is_empty() {
+        0
+    } else if v.len() == 1 {
+        v[0]
+    } else {
+        let (a, b) = v.split_at(v.len() / 2).into();
+        let a_cloned = a.to_vec();
+        let b_cloned = b.to_vec();
+        thread::spawn(move || {
+            a_cloned.into_iter().sum::<i32>()
+        }).join().unwrap()
+         + thread::spawn(move || {
+            b_cloned.into_iter().sum::<i32>()
+        }).join().unwrap()
+
+    }
 }
 
 #[cfg(test)]
