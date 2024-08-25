@@ -97,13 +97,10 @@ impl IndexMut<&TicketId> for TicketStore {
 
 impl<'a> IntoIterator for &'a TicketStore {
     type Item = &'a Ticket;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
+    type IntoIter = std::collections::btree_map::Values<'a, TicketId, Ticket>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.tickets
-            .values()
-            .collect::<Vec<&Ticket>>()
-            .into_iter()
+        self.tickets.values()
     }
 }
 
