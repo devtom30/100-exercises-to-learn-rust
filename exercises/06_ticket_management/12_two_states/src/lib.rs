@@ -6,7 +6,9 @@
 // You also need to add a `get` method that takes as input a `TicketId`
 // and returns an `Option<&Ticket>`.
 
+use rand::{Rng, thread_rng};
 use ticket_fields::{TicketDescription, TicketTitle};
+use crate::Status::ToDo;
 
 #[derive(Clone)]
 pub struct TicketStore {
@@ -15,6 +17,14 @@ pub struct TicketStore {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct TicketId(u64);
+
+impl TicketId {
+    pub fn new() -> Self {
+        Self {
+            0: thread_rng().random::<u64>()
+        }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Ticket {
@@ -44,8 +54,19 @@ impl TicketStore {
         }
     }
 
-    pub fn add_ticket(&mut self, ticket: Ticket) {
-        self.tickets.push(ticket);
+    pub fn add_ticket(&mut self, ticket_draft: TicketDraft) -> TicketId {
+        let ticket_id = TicketId::new();
+        self.tickets.push(Ticket {
+            id: ticket_id,
+            description: ticket_draft.description,
+            title: ticket_draft.title,
+            status: ToDo
+        });
+        ticket_id
+    }
+
+    pub fn get(&self, ticket_id: TicketId) -> Option<&Ticket> {
+        self.tickets.iter().find(|ticket| ticket.id == ticket_id)
     }
 }
 
