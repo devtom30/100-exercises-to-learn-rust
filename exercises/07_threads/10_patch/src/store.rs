@@ -1,4 +1,4 @@
-use crate::data::{Status, Ticket, TicketDraft};
+use crate::data::{Status, Ticket, TicketDraft, TicketPatch};
 use std::collections::BTreeMap;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -29,6 +29,21 @@ impl TicketStore {
         };
         self.tickets.insert(id, ticket);
         id
+    }
+
+    pub fn update(&mut self, ticket_patch: TicketPatch) {
+        let ticket_option = self.get_mut(ticket_patch.id);
+        let ticket = ticket_option.expect("ticket {} not found");
+
+        if ticket_patch.status.is_some() {
+            ticket.status = ticket_patch.status.unwrap();
+        }
+        if ticket_patch.title.is_some() {
+            ticket.title = ticket_patch.title.unwrap();
+        }
+        if ticket_patch.description.is_some() {
+            ticket.description = ticket_patch.description.unwrap();
+        }
     }
 
     pub fn get(&self, id: TicketId) -> Option<&Ticket> {
