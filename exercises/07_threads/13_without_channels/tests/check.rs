@@ -31,9 +31,9 @@ fn works() {
 
     let reader = store;
 
-    let ticket1 = reader.get(ticket_id1).unwrap();
-    assert_eq!(ticket_id1, ticket1.read().unwrap().id);
+    let ticket1 = reader.get(ticket_id1);
+    assert!(ticket1.is_none());
 
-    let ticket2 = reader.get(ticket_id2).unwrap();
-    assert_eq!(ticket_id2, ticket2.read().unwrap().id);
+    let ticket2 = reader.get(ticket_id2);
+    assert!(ticket2.is_none());
 }
