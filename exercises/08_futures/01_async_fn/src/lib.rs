@@ -1,3 +1,7 @@
+use std::future::Future;
+use std::str::Utf8Error;
+use tokio::io;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 
 // TODO: write an echo server that accepts incoming TCP connections and
@@ -11,7 +15,30 @@ use tokio::net::TcpListener;
 // - `tokio::net::TcpStream::split` to obtain a reader and a writer from the socket
 // - `tokio::io::copy` to copy data from the reader to the writer
 pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
-    todo!()
+    loop {
+        let (mut socket, _) = listener.accept().await?;
+        let (mut reader, mut writer) = socket.split();
+        io::copy(&mut reader, &mut writer).await?;
+
+        /*let mut buf = Vec::new();
+        reader.read_to_end(&mut buf).await.unwrap();
+        let response = match std::str::from_utf8(&buf) {
+            Ok(str) => {
+                println!("request is : {}", str);
+                match str {
+                    "hello" => "hello ma couille!",
+                    "world" => &*format!("What a wonderful {}", str),
+                    "foo" => "foo bar ?!",
+                    "bar" => "The joke is over now? At least for 5 minutes, dude!",
+                    _ => "uh?"
+                }
+            }
+            Err(_) => "not decoced buffer"
+        };
+        writer.write_all(response.as_bytes()).await?;
+        // Close the write side of the socket
+        writer.shutdown().await?;*/
+    }
 }
 
 #[cfg(test)]
@@ -25,13 +52,14 @@ mod tests {
         let addr = listener.local_addr().unwrap();
         tokio::spawn(echo(listener));
 
-        let requests = vec!["hello", "world", "foo", "bar"];
+        let requests = vec!["hello", "world", "foo", "bar", "foooooo"];
 
         for request in requests {
             let mut socket = tokio::net::TcpStream::connect(addr).await.unwrap();
             let (mut reader, mut writer) = socket.split();
 
             // Send the request
+            println!("sending {}", request);
             writer.write_all(request.as_bytes()).await.unwrap();
             // Close the write side of the socket
             writer.shutdown().await.unwrap();
@@ -40,6 +68,7 @@ mod tests {
             let mut buf = Vec::with_capacity(request.len());
             reader.read_to_end(&mut buf).await.unwrap();
             assert_eq!(&buf, request.as_bytes());
+            println!("received in response {}", std::str::from_utf8(&buf).unwrap_or("buffer not processed from utf8 bytes"));
         }
     }
 }
